@@ -1,2 +1,5 @@
 # DigitalOcean_functions
-I way to interact with Digital Ocean server less functions 
+A way to interact with Digital Ocean serverless functions.
+
+
+You will need a .env with Digital ocean api key.
