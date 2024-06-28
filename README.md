@@ -1,104 +1,81 @@
-# DigitalOcean_functions
+# DigitalOcean Functions
+
 A way to interact with Digital Ocean serverless functions.
 
+You will need a .env file with your Digital Ocean API key.
 
-You will need a .env with Digital ocean api key
+## Installation and Configuration
 
+### Install and Configure doctl on Linux
 
-## How to Install and Configure doctl on Linux
+1. **Install doctl**:
+   - Download doctl from the [Releases page](https://github.com/digitalocean/doctl/releases).
+   - Extract the binary and move it to your PATH.
+     ```sh
+     cd ~
+     wget https://github.com/digitalocean/doctl/releases/download/v1.104.0/doctl-1.104.0-linux-amd64.tar.gz
+     tar xf ~/doctl-1.104.0-linux-amd64.tar.gz
+     sudo mv ~/doctl /usr/local/bin
+     ```
 
-**Validated on 15 Apr 2020 • Last edited on 8 May 2024**
+2. **Create and Use API Token**:
+   - Create an API token from the DigitalOcean control panel with read and write access.
+   - Initialize doctl with the API token.
+     ```sh
+     doctl auth init --context <NAME>
+     doctl auth list
+     doctl auth switch --context <NAME>
+     ```
 
-### Step 1: Install doctl
+3. **Validate doctl**:
+   - Check account details and create a droplet.
+     ```sh
+     doctl account get
+     doctl compute droplet create --region sfo2 --image ubuntu-23-10-x64 --size s-1vcpu-1gb <DROPLET-NAME>
+     doctl compute image list
+     doctl compute droplet delete <DROPLET-ID>
+     ```
 
-1. **Download doctl**:
-   Visit the [Releases page](https://github.com/digitalocean/doctl/releases) for the doctl GitHub project and find the appropriate archive for your Linux system. Download the archive using wget:
+4. **Install Serverless Functions Support (Optional)**:
+   - Install the serverless extension.
+     ```sh
+     doctl serverless install
+     ```
 
-   ```sh
-   cd ~
-   wget https://github.com/digitalocean/doctl/releases/download/v1.104.0/doctl-1.104.0-linux-amd64.tar.gz
-   ```
+## Functions Quickstart
 
-2. **Extract the binary**:
-   ```sh
-   tar xf ~/doctl-1.104.0-linux-amd64.tar.gz
-   ```
+1. **Command Line Setup**:
+   - Ensure doctl is installed and authorized with serverless extension.
+     ```sh
+     doctl version
+     doctl serverless status
+     ```
 
-3. **Move the binary to your PATH**:
-   ```sh
-   sudo mv ~/doctl /usr/local/bin
-   ```
+2. **Create a Namespace**:
+   - List available regions and create a namespace.
+     ```sh
+     doctl serverless namespaces list-regions
+     doctl serverless namespaces create --label example-namespace --region nyc1
+     ```
 
-### Step 2: Create an API Token
+3. **Create and Deploy a Function**:
+   - Initialize a sample project and deploy the function.
+     ```sh
+     doctl serverless init --language js <example-project>
+     doctl serverless deploy <example-project>
+     ```
 
-1. **Create an API Token**:
-   - Go to the Applications & API page in the DigitalOcean control panel.
-   - Create a token with read and write access.
-   - Save the token in a safe place as it is displayed only once.
+4. **Invoke and Customize the Function**:
+   - Invoke the deployed function and customize the greeting.
+     ```sh
+     doctl serverless functions invoke sample/hello
+     doctl serverless functions invoke sample/hello -p name:sammy
+     ```
 
-### Step 3: Use the API Token to Grant Account Access to doctl
+5. **Destroy a Function**:
+   - Remove functions from the cloud.
+     ```sh
+     doctl serverless undeploy sample/hello
+     ```
 
-1. **Initialize doctl with the API token**:
-   If you installed doctl using the Ubuntu Snap package, first create the user configuration directory:
-   ```sh
-   mkdir ~/.config
-   ```
-
-2. **Authenticate doctl**:
-   ```sh
-   doctl auth init --context <NAME>
-   ```
-
-   You can switch between multiple authenticated accounts:
-   ```sh
-   doctl auth list
-   doctl auth switch --context <NAME>
-   ```
-
-### Step 4: Validate that doctl is Working
-
-1. **Check account details**:
-   ```sh
-   doctl account get
-   ```
-
-   Expected output:
-   ```
-   Email                      Droplet Limit    Email Verified    UUID                                        Status
-   sammy@example.org          10               true              3a56c5e109736b50e823eaebca85708ca0e5087c    active
-   ```
-
-2. **Create a Droplet**:
-   ```sh
-   doctl compute droplet create --region sfo2 --image ubuntu-23-10-x64 --size s-1vcpu-1gb <DROPLET-NAME>
-   ```
-
-3. **List available Droplet images**:
-   ```sh
-   doctl compute image list
-   ```
-
-4. **Delete a Droplet**:
-   ```sh
-   doctl compute droplet delete <DROPLET-ID>
-   ```
-
-   Confirm deletion by typing `y` when prompted.
-
-### Step 5: Install Serverless Functions Support (Optional)
-
-1. **Install the serverless extension**:
-   ```sh
-   doctl serverless install
-   ```
-
-   The installation process:
-   ```
-   Downloading...Unpacking...Installing...Cleaning up...
-   Done
-   ```
-
-2. **Get started with Functions**:
-   - Create a namespace.
-   - Deploy your functions.
-   - See the Functions Quickstart for more details..
+Your function is now undeployed from Functions.
